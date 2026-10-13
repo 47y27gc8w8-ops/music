@@ -1,0 +1,88 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: linear-gradient(135deg, #f5f7fa 0%, #e4edf5 100%);
+    color: #333;
+    line-height: 1.6;
+    padding: 20px;
+    background-image: url("data:image/svg+xml,%3Csvg width='20' height='20' viewBox='0 0 20 20' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%239C9EAD' fill-opacity='0.1'%3E%3Cpath d='M10 0l2.888 8.168h4.732L12 9.05l2.166 6.534H6.044l2.166-6.534L10 9.05 7.112 8.168H2.888L10 0z'/%3E%3C/g%3E%3C/svg%3E");
+}
+
+.container {
+    max-width: 900px;
+    margin: 0 auto;
+    background: rgba(255,255,255,0.85);
+    border-radius: 12px;
+    padding: 30px;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+    backdrop-filter: blur(4px);
+}
+
+.container p {
+    text-align: center;
+    margin-bottom: 30px;
+    font-size: 1.1em;
+    color: #2c3e50;
+    line-height: 1.7;
+    max-width: 700px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.music-library {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 24px;
+}
+
+.music-item {
+    background: white;
+    border-radius: 10px;
+    padding: 20px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    text-align: center;
+    border: 1px solid rgba(0,0,0,0.05);
+}
+
+.music-item:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.12);
+}
+
+.music-item h3 {
+    margin-bottom: 14px;
+    color: #1a252f;
+    font-size: 1.3em;
+    font-weight: 600;
+}
+
+.music-item audio {
+    width: 100%;
+    margin-top: 10px;
+    border-radius: 4px;
+}
+
+/* Add some subtle accent colors */
+.music-item::before {
+    content: '';
+    display: block;
+    width: 4px;
+    height: 100%;
+    background: linear-gradient(to bottom, #6a11cb 0%, #2575fc 100%);
+    border-top-left-radius: 8px;
+    border-bottom-left-radius: 8px;
+    position: absolute;
+    left: 0;
+    top: 0;
+}
+
+.music-item {
+    position: relative;
+    padding-left: 30px;
+}
