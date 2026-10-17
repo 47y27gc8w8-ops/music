@@ -166,21 +166,47 @@ function createMusicItem(item) {
 
     musicItem.innerHTML = innerHTML;
 
-    // Get the audio element and add event listeners to update document.title
+    // Get the audio element and add event listeners to update document.title and media session
     const audioElement = musicItem.querySelector('audio');
     if (audioElement) {
         // When audio starts playing, update the document title to show the song title
         audioElement.addEventListener('play', function() {
             document.title = title;
+            // Set media session metadata for lock screen widget
+            if ('mediaSession' in navigator) {
+                navigator.mediaSession.metadata = new MediaMetadata({
+                    title: title,
+                    artist: '',
+                    album: '',
+                    artwork: item.imageFile ? [
+                        {
+                            src: `songs/${item.imageFile}`,
+                            sizes: '96x96',
+                            type: `image/${item.imageFile.split('.').pop()}`
+                        }
+                    ] : []
+                });
+                // Optional: handle media session actions to prevent duplicates
+                navigator.mediaSession.setActionHandler('play', function() {});
+                navigator.mediaSession.setActionHandler('pause', function() {});
+                navigator.mediaSession.setActionHandler('seekbackward', function() {});
+                navigator.mediaSession.setActionHandler('seekforward', function() {});
+            }
         });
 
         // When audio pauses or ends, reset the document title
         audioElement.addEventListener('pause', function() {
             document.title = 'My Music';
+            if ('mediaSession' in navigator) {
+                navigator.mediaSession.metadata = null;
+            }
         });
 
         audioElement.addEventListener('ended', function() {
             document.title = 'My Music';
+            if ('mediaSession' in navigator) {
+                navigator.mediaSession.metadata = null;
+            }
         });
     }
 
