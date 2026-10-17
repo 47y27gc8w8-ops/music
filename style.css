@@ -65,24 +65,6 @@ body {
     margin-bottom: 50px;
 }
 
-.upload-section {
-    background: linear-gradient(90deg, var(--section-bg) 0%, rgba(20, 25, 30, 0) 100%);
-    padding: 30px;
-    border-left: 4px solid var(--cyan-primary);
-    border-radius: 8px;
-    margin-bottom: 40px;
-}
-
-.upload-section h2 {
-    font-size: 2rem;
-    font-weight: 600;
-    margin-bottom: 10px;
-}
-
-.upload-section p {
-    font-size: 1.4rem;
-}
-
 /* Color Accents & Glows */
 .pink-glow {
     color: var(--pink-primary);
@@ -116,7 +98,6 @@ body {
                 border-color var(--transition-speed) var(--transition-easing);
     border: 1px solid var(--music-item-border);
     position: relative;
-    padding-left: 30px;
 }
 
 .music-item:hover {
@@ -130,6 +111,21 @@ body {
     color: var(--cyan-primary);
     font-size: 1.2em;
     font-weight: 600;
+}
+
+/* Album Cover Styles */
+.album-cover {
+    width: 100%;
+    height: auto;
+    border-radius: 8px;
+    margin-bottom: 12px;
+    object-fit: cover;
+    border: 1px solid var(--music-item-border);
+    transition: border-color var(--transition-speed) var(--transition-easing);
+}
+
+.music-item:hover .album-cover {
+    border-color: var(--music-item-hover-border);
 }
 
 /* Custom Native Audio Player Styling */
@@ -158,7 +154,7 @@ body {
 
 /* Make the buttons visible against the dark background */
 .music-item audio::-webkit-media-controls-play-button,
-.music-item audio::-webkit-media-controls-mute-button {
+.music-item audio::-webkit.media-controls-mute-button {
     background-color: var(--pink-primary);
     border-radius: 50%;
     transform: scale(0.8);
@@ -167,13 +163,13 @@ body {
 }
 
 .music-item audio::-webkit-media-controls-play-button:hover,
-.music-item audio::-webkit-media-controls-mute-button:hover {
+.music-item audio::-webkit.media-controls-mute-button:hover {
     transform: scale(0.9);
 }
 
 /* Adjust timeline and sliders for dark mode visibility */
-.music-item audio::-webkit-media-controls-timeline,
-.music-item audio::-webkit-media-controls-volume-slider {
+.music-item audio::-webkit.media-controls-timeline,
+.music-item audio::-webkit.media-controls-volume-slider {
     padding: 0 5px;
     filter: invert(80%) hue-rotate(180deg);
 }

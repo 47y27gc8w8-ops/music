@@ -6,16 +6,16 @@ document.addEventListener('DOMContentLoaded', async function() {
     showLoadingMessage(musicLibrary);
 
     try {
-        // Fetch and process music files
-        const audioFiles = await fetchAndFilterAudioFiles();
+        // Fetch and process music files (audio and images)
+        const musicItems = await fetchAndProcessFiles();
 
-        if (audioFiles.length === 0) {
+        if (musicItems.length === 0) {
             showNoFilesMessage(musicLibrary);
             return;
         }
 
         // Render music library
-        renderMusicLibrary(musicLibrary, audioFiles);
+        renderMusicLibrary(musicLibrary, musicItems);
 
     } catch (error) {
         showErrorMessage(musicLibrary, error);
@@ -31,10 +31,10 @@ function showLoadingMessage(container) {
 }
 
 /**
- * Fetches audio files from the GitHub API and filters for supported formats
- * @returns {Promise<Array<string>>} Array of audio file names
+ * Fetches and processes files from the GitHub API to find audio files and matching album covers
+ * @returns {Promise<Array<Object>>} Array of objects with audioFile and imageFile properties
  */
-async function fetchAndFilterAudioFiles() {
+async function fetchAndProcessFiles() {
     const response = await fetch('https://api.github.com/repos/47y27gc8w8-ops/music/contents/songs');
 
     if (!response.ok) {
@@ -42,19 +42,30 @@ async function fetchAndFilterAudioFiles() {
     }
 
     const files = await response.json();
-    return filterAudioFiles(files);
-}
 
-/**
- * Filters an array of GitHub file objects for audio files
- * @param {Array<Object>} files - Array of GitHub file objects
- * @returns {Array<string>} Array of audio file names
- */
-function filterAudioFiles(files) {
-    return files
+    const audioFiles = files
         .filter(isFile)
         .filter(isAudioFile)
         .map(getFileName);
+
+    const imageFiles = files
+        .filter(isFile)
+        .filter(isImageFile)
+        .map(getFileName);
+
+    // Create a map from base name to image file name for quick lookup
+    const imageMap = {};
+    imageFiles.forEach(imageName => {
+        const baseName = extractTitleFromFilename(imageName);
+        imageMap[baseName] = imageName;
+    });
+
+    // For each audio file, try to find a matching image
+    return audioFiles.map(audioName => {
+        const baseName = extractTitleFromFilename(audioName);
+        const imageName = imageMap[baseName] || null;
+        return { audioFile: audioName, imageFile: imageName };
+    });
 }
 
 /**
@@ -74,6 +85,16 @@ function isFile(file) {
 function isAudioFile(file) {
     const ext = getFileExtension(file.name).toLowerCase();
     return ['mp3', 'wav', 'ogg', 'm4a', 'aac'].includes(ext);
+}
+
+/**
+ * Checks if a file has an image extension
+ * @param {Object} file - GitHub file object
+ * @returns {boolean} True if it's an image file
+ */
+function isImageFile(file) {
+    const ext = getFileExtension(file.name).toLowerCase();
+    return ['jpg', 'jpeg', 'png', 'gif', 'webp'].includes(ext);
 }
 
 /**
@@ -103,37 +124,47 @@ function showNoFilesMessage(container) {
 }
 
 /**
- * Renders the music library with the given audio files
+ * Renders the music library with the given music items
  * @param {HTMLElement} container - The container element to render in
- * @param {Array<string>} audioFiles - Array of audio file names
+ * @param {Array<Object>} musicItems - Array of objects with audioFile and imageFile properties
  */
-function renderMusicLibrary(container, audioFiles) {
+function renderMusicLibrary(container, musicItems) {
     container.innerHTML = ''; // Clear loading message
 
-    audioFiles.forEach(filename => {
-        const musicItem = createMusicItem(filename);
+    musicItems.forEach(item => {
+        const musicItem = createMusicItem(item);
         container.appendChild(musicItem);
     });
 }
 
 /**
- * Creates a music item element for the given audio file
- * @param {string} filename - Name of the audio file
+ * Creates a music item element for the given audio and image files
+ * @param {Object} item - Object with audioFile and imageFile properties
  * @returns {HTMLElement} Music item element
  */
-function createMusicItem(filename) {
+function createMusicItem(item) {
     const musicItem = document.createElement('div');
     musicItem.className = 'music-item';
 
-    const title = extractTitleFromFilename(filename);
+    const title = extractTitleFromFilename(item.audioFile);
 
-    musicItem.innerHTML = `
+    // Start building the inner HTML
+    let innerHTML = '';
+
+    // Add album cover if available
+    if (item.imageFile) {
+        innerHTML += `<img src="songs/${item.imageFile}" alt="${title} album cover" class="album-cover">`;
+    }
+
+    innerHTML += `
         <h3>${title}</h3>
         <audio controls preload="none">
-            <source src="songs/${filename}" type="audio/mpeg">
+            <source src="songs/${item.audioFile}" type="audio/mpeg">
             Your browser does not support the audio element.
         </audio>
     `;
+
+    musicItem.innerHTML = innerHTML;
 
     return musicItem;
 }
