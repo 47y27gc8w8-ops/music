@@ -166,6 +166,24 @@ function createMusicItem(item) {
 
     musicItem.innerHTML = innerHTML;
 
+    // Get the audio element and add event listeners to update document.title
+    const audioElement = musicItem.querySelector('audio');
+    if (audioElement) {
+        // When audio starts playing, update the document title to show the song title
+        audioElement.addEventListener('play', function() {
+            document.title = title;
+        });
+
+        // When audio pauses or ends, reset the document title
+        audioElement.addEventListener('pause', function() {
+            document.title = 'My Music';
+        });
+
+        audioElement.addEventListener('ended', function() {
+            document.title = 'My Music';
+        });
+    }
+
     return musicItem;
 }
 
